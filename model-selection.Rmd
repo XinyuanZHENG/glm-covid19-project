@@ -127,10 +127,52 @@ l <- cvglm$lambda.min
 cv.err <- cvglm$cvm[which.min(cvglm$cvm)] #704375.3
 
 pred.cvglm <- predict(cvglm, newx=t)
-
 plot(glm.data$case, type = "l", ylim = c(0,8000))
-lines((dim(train)[1]+1):(dim(train)[1]+dim(test)[1]), pred.cvglm, col = "blue", lwd=2)
+ind <- c(dim(train)[1]+1):(dim(train)[1]+dim(test)[1])
+lines(ind, pred.cvglm, col = "blue", lwd=2)
+
+#RSS
+RSS <- sum((pred.cvglm-glm.data$case[ind])^2) #2694339
 ```
+
+
+```{r}
+# # using fewer folds
+# require(methods)
+# cvglm <- cv.glmnet(x, y, alpha = 0, lambda = 10^seq(-3,3,by =.1), nfolds=5)
+# summary(cvglm)
+# plot(cvglm)
+# 
+# l <- cvglm$lambda.min
+# cv.err <- cvglm$cvm[which.min(cvglm$cvm)] #687815.6
+# 
+# pred.cvglm <- predict(cvglm, newx=t)
+# plot(glm.data$case, type = "l", ylim = c(0,8000))
+# ind <- c(dim(train)[1]+1):(dim(train)[1]+dim(test)[1])
+# lines(ind, pred.cvglm, col = "blue", lwd=2)
+# 
+# #RSS
+# RSS <- sum((pred.cvglm-glm.data$case[ind])^2) #2957421
+```
+
+
+```{r}
+# # lasso
+# cvglm2 <- cv.glmnet(x, y, alpha = 1, lambda = 10^seq(-3,3,by =.1), nfolds= 20)
+# summary(cvglm2)
+# plot(cvglm2)
+# 
+# l2 <- cvglm2$lambda.min
+# pred.cvglm2 <- predict(cvglm2, newx=t)
+# cv.err2 <- cvglm2$cvm[which.min(cvglm2$cvm)] #666189.9
+# 
+# plot(glm.data$case, type = "l", ylim = c(0,8000))
+# lines((dim(train)[1]+1):(dim(train)[1]+dim(test)[1]), pred.cvglm2, col = "blue", lwd=2)
+# 
+# #RSS
+# RSS2 <- sum((pred.cvglm2-glm.data$case[ind])^2) #1293788
+```
+
 
 
 ```{r}
@@ -145,16 +187,28 @@ cv.err2 <- cvglm2$cvm[which.min(cvglm2$cvm)] #674864.3
 
 plot(glm.data$case, type = "l", ylim = c(0,8000))
 lines((dim(train)[1]+1):(dim(train)[1]+dim(test)[1]), pred.cvglm2, col = "blue", lwd=2)
+
+#RSS
+RSS2 <- sum((pred.cvglm2-glm.data$case[ind])^2) #1275282
 ```
 
 
-
-
-
-
-
-
-
+```{r}
+# # lasso
+# cvglm2 <- cv.glmnet(x, y, alpha = 1, lambda = 10^seq(-3,3,by =.1), nfolds = 7)
+# summary(cvglm2)
+# plot(cvglm2)
+# 
+# l2 <- cvglm2$lambda.min
+# pred.cvglm2 <- predict(cvglm2, newx=t)
+# cv.err2 <- cvglm2$cvm[which.min(cvglm2$cvm)] #691746.7
+# 
+# plot(glm.data$case, type = "l", ylim = c(0,8000))
+# lines((dim(train)[1]+1):(dim(train)[1]+dim(test)[1]), pred.cvglm2, col = "blue", lwd=2)
+# 
+# #RSS
+# RSS2 <- sum((pred.cvglm2-glm.data$case[ind])^2) #1525892
+```
 
 
 
