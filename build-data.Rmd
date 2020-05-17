@@ -103,16 +103,6 @@ for (i in 1:(length(age.path))){
 sex.path <- c(paste("nyc.gov/",3, ".",c(26,27,30,31),"/by-sex.csv", sep =""),
               paste("nyc.gov/",4, ".",c(1:30),"/by-sex.csv", sep =""),
               paste("nyc.gov/",5, ".",c(1:15),"/by-sex.csv", sep =""))
-
-# age.dfname <- c(paste("Mar.",c(26,27,30,31),".age",sep =""),
-#                paste("Apr.",c(1:30), ".age", sep =""),
-#                paste("May.",c(1:15),".age", sep =""))
-# 
-# # read the csv files separately in matrixs
-# for (i in 1:length(age.path)) {
-#    assign(age.dfname[i], read.csv(age.path[i]))
-# }
-
 # read the files in one list
 sex.list <- vector(mode = "list", length = length(sex.path))
 for (i in 1:length(sex.path)){
@@ -123,27 +113,18 @@ for (i in 1:length(sex.path)){
 
 ```{r}
 # ORs by age all dates
-age.ORlist <- vector(mode = "list", length = length(age.path))
+sex.ORlist <- vector(mode = "list", length = length(sex.path))
 
-for (i in 1:length(age.path)){
-  
-  # init a 3X5 matrix for each date's ORs
-  OR <- matrix(NA, ncol=3, nrow=5)
+
+for (i in 1:length(sex.path)){
+  OR <- matrix(NA, ncol=3, nrow=1)
   colnames(OR) <- c("case","hos","death")
-  df <- age.list[[i]] #data for each date in a df
   
-    for (j in 2:4){
-    total <- (df[6,j]/(100000-df[6,j]))
-  
-    age17 <- (df[1,j]/(100000-df[1,j]))
-    age44 <- (df[2,j]/(100000-df[2,j]))
-    age64 <- (df[3,j]/(100000-df[3,j]))
-    age74 <- (df[4,j]/(100000-df[4,j]))
-    age75Older <- (df[5,j]/(100000-df[5,j]))
-    
-    OR[,j-1] <- c(age17,age44,age64,age74,age75Older)/total
-    OR <- round(OR,6) # ORs for ith date
-    }
+  df <- sex.list[[i]] #data for each date in a df
+  female.odds <- df[1,1]/(100000-df[1,1])
+  male.odds <- df[2,1]/(100000-df[2,1])
+  OR <- female.odds/male.odds
+  OR <- round(OR,6) # ORs for ith date
   age.ORlist[[i]] <- OR
 }
 
