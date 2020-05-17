@@ -33,6 +33,7 @@ for (i in 1:length(age.path)){
 }
 ```
 
+
 ```{r} 
 # For Mar.26
 # assume the death rate of 0-17 years on Mar 26 is 0
@@ -42,47 +43,6 @@ Mar.26.age[1,"DEATH_RATE"] <- 0
 Mar.26.age[,-1] <- Mar.26.age[,-1] + 0.5/100000
 #fix for Mar.27 too!
 age.list[[2]][,-1] <- age.list[[2]][,-1] + 0.5/100000
-```
-
-
-```{r}
-# EDA age0-17
-age17.OR <- matrix(NA,ncol=3,nrow=length(age.path))
-
-for (i in 1:(length(age.path))){
-  mat <- age.ORlist[[i]]
-  age17.OR[i,] <- mat[1,]
-}
-
-library(miscTools)
-
-my.df <- as.matrix(age17.OR)
-my.vec <- rep(NA,3)
-new.df <- insertRow(my.df,3,my.vec)
-age17.OR <- insertRow(new.df,3,my.vec)
-
-plot(age17.OR[,1],x=c(1:51),"l")
-```
-
-
-
-```{r}
-# EDA by age
-age17.OR <- matrix(NA,ncol=3,nrow=length(age.path))
-
-for (i in 1:(length(age.path))){
-  mat <- age.ORlist[[i]]
-  age17.OR[i,] <- mat[1,]
-}
-
-library(miscTools)
-
-my.df <- as.matrix(age17.OR)
-my.vec <- rep(NA,3)
-new.df <- insertRow(my.df,3,my.vec)
-age17.OR <- insertRow(new.df,3,my.vec)
-
-plot(age17.OR[,1],x=c(1:51),"l")
 ```
 
 

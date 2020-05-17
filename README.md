@@ -8,13 +8,13 @@ The folder nyc.gov contains the raw data.
 Some of the data from nyc.gov (data by age and data by gender) were organized and processed.
 
 ## calc-odds-ratios.Rmd
-Use processed data from build-data-ORs.Rmd to calc the odds ratio.
+Use processed data from build-data-ORs.Rmd to calculate odds ratios.
 
 ## build-data-glm.Rmd
 Summary data from nyc.gov were organized and processed. Some variables are added.
 
 ## ts-analysis.Rmd
-Summary data were used to do some basic EDA.
+Summary data were used to do some basic analysis.
 
 ## model-selection.Rmd
 Generalized linear models are used to fit and predict summary data.
