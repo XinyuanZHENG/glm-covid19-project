@@ -17,6 +17,11 @@ age.path <- c(paste("nyc.gov/",3, ".",c(26,27,30,31),"/by-age.csv", sep =""),
 age.dfname <- c(paste("Mar.",c(26,27,30,31),".age",sep =""),
               paste("Apr.",c(1:30), ".age", sep =""),
               paste("May.",c(1:15),".age", sep =""))
+
+date.dfname <- c(paste("Mar.",c(26,27,30,31),sep =""),
+              paste("Apr.",c(1:30), sep =""),
+              paste("May.",c(1:15), sep =""))
+
 # read the csv files separately in matrixs
 for (i in 1:length(age.path)) {
   assign(age.dfname[i], read.csv(age.path[i]))
@@ -35,74 +40,61 @@ Mar.26.age[1,"DEATH_RATE"] <- 0
 # Haldane-Anscombe correction to fix 0 cell
 # add 0.5 to each cell of contingency table, i.e. add 0.5/100000 to rates per 100,000 people
 Mar.26.age[,-1] <- Mar.26.age[,-1] + 0.5/100000
-# case / hos
-(Mar.26.age[,2]/Mar.26.age[,3])
-# younger people get more hospitalization per case
-# all ORs on Mar 26
-Mar.26.OR <- matrix(NA, ncol=3, nrow=5)
-colnames(Mar.26.OR) <- c("case","hos","death")
-for (j in 2:4){
-  total <- (Mar.26.age[6,j]/(100000-Mar.26.age[6,j]))
-
-  age17 <- (Mar.26.age[1,j]/(100000-Mar.26.age[1,j]))
-  age44 <- (Mar.26.age[2,j]/(100000-Mar.26.age[2,j]))
-  age64 <- (Mar.26.age[3,j]/(100000-Mar.26.age[3,j]))
-  age74 <- (Mar.26.age[4,j]/(100000-Mar.26.age[4,j]))
-  age75Older <- (Mar.26.age[5,j]/(100000-Mar.26.age[5,j]))
-  
-  Mar.26.OR[,j-1] <- c(age17,age44,age64,age74,age75Older)/total
-  Mar.26.OR <- round(Mar.26.OR,6)
-}
+#fix for Mar.27 too!
+age.list[[2]][,-1] <- age.list[[2]][,-1] + 0.5/100000
 ```
+
 
 ```{r}
-# ORs by age all dates
-age.ORlist <- vector(mode = "list", length = length(age.path))
+# EDA age0-17
+age17.OR <- matrix(NA,ncol=3,nrow=length(age.path))
 
-for (i in 1:length(age.path)){
-  
-  # init a 3X5 matrix for each date's ORs
-  OR <- matrix(NA, ncol=3, nrow=5)
-  colnames(OR) <- c("case","hos","death")
-  df <- age.list[[i]] #data for each date in a df
-  
-    for (j in 2:4){
-    total <- (df[6,j]/(100000-df[6,j]))
-  
-    age17 <- (df[1,j]/(100000-df[1,j]))
-    age44 <- (df[2,j]/(100000-df[2,j]))
-    age64 <- (df[3,j]/(100000-df[3,j]))
-    age74 <- (df[4,j]/(100000-df[4,j]))
-    age75Older <- (df[5,j]/(100000-df[5,j]))
-    
-    OR[,j-1] <- c(age17,age44,age64,age74,age75Older)/total
-    OR <- round(OR,6) # ORs for ith date
-    }
-  age.ORlist[[i]] <- OR
+for (i in 1:(length(age.path))){
+  mat <- age.ORlist[[i]]
+  age17.OR[i,] <- mat[1,]
 }
 
-age.ORlist[[1]] <- Mar.26.OR
+library(miscTools)
+
+my.df <- as.matrix(age17.OR)
+my.vec <- rep(NA,3)
+new.df <- insertRow(my.df,3,my.vec)
+age17.OR <- insertRow(new.df,3,my.vec)
+
+plot(age17.OR[,1],x=c(1:51),"l")
 ```
+
 
 
 ```{r}
 # EDA by age
-age17.OR
+age17.OR <- matrix(NA,ncol=3,nrow=length(age.path))
+
 for (i in 1:(length(age.path))){
   mat <- age.ORlist[[i]]
-  age17.OR[i] <- mat[1,]
+  age17.OR[i,] <- mat[1,]
 }
 
+library(miscTools)
+
+my.df <- as.matrix(age17.OR)
+my.vec <- rep(NA,3)
+new.df <- insertRow(my.df,3,my.vec)
+age17.OR <- insertRow(new.df,3,my.vec)
+
+plot(age17.OR[,1],x=c(1:51),"l")
 ```
 
 
 ## By Gender Group
+
 ```{r}
 # by-gender
 # 3.28 3.29 missing
 sex.path <- c(paste("nyc.gov/",3, ".",c(26,27,30,31),"/by-sex.csv", sep =""),
               paste("nyc.gov/",4, ".",c(1:30),"/by-sex.csv", sep =""),
               paste("nyc.gov/",5, ".",c(1:15),"/by-sex.csv", sep =""))
+
 # read the files in one list
 sex.list <- vector(mode = "list", length = length(sex.path))
 for (i in 1:length(sex.path)){
@@ -111,42 +103,3 @@ for (i in 1:length(sex.path)){
 ```
 
 
-```{r}
-# ORs by age all dates
-sex.ORlist <- vector(mode = "list", length = length(sex.path))
-
-
-for (i in 1:length(sex.path)){
-  OR <- matrix(NA, ncol=3, nrow=1)
-  colnames(OR) <- c("case","hos","death")
-  
-  df <- sex.list[[i]] #data for each date in a df
-  female.odds <- df[1,1]/(100000-df[1,1])
-  male.odds <- df[2,1]/(100000-df[2,1])
-  OR <- female.odds/male.odds
-  OR <- round(OR,6) # ORs for ith date
-  age.ORlist[[i]] <- OR
-}
-
-age.ORlist[[1]] <- Mar.26.OR
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## By Boro
-
-
-```{r}
-Mar26_boro <- read.csv("nyc.gov/3.26/boro.csv")
-```

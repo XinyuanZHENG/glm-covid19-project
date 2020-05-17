@@ -1,0 +1,85 @@
+---
+title: "ORs"
+author: "Xinyuan Zheng xz2906"
+date: "5/17/2020"
+output: pdf_document
+---
+
+```{r}
+# case / hos
+(Mar.26.age[,2]/Mar.26.age[,3])
+# younger people get more hospitalization per case
+# all ORs on Mar 26
+Mar.26.OR <- matrix(NA, ncol=3, nrow=5)
+colnames(Mar.26.OR) <- c("case","hos","death")
+for (j in 2:4){
+  total <- (Mar.26.age[6,j]/(100000-Mar.26.age[6,j]))
+
+  age17 <- (Mar.26.age[1,j]/(100000-Mar.26.age[1,j]))
+  age44 <- (Mar.26.age[2,j]/(100000-Mar.26.age[2,j]))
+  age64 <- (Mar.26.age[3,j]/(100000-Mar.26.age[3,j]))
+  age74 <- (Mar.26.age[4,j]/(100000-Mar.26.age[4,j]))
+  age75Older <- (Mar.26.age[5,j]/(100000-Mar.26.age[5,j]))
+  
+  Mar.26.OR[,j-1] <- c(age17,age44,age64,age74,age75Older)/total
+  Mar.26.OR <- round(Mar.26.OR,6)
+}
+```
+
+
+```{r}
+# ORs by age all dates
+age.ORlist <- vector(mode = "list", length = length(age.path))
+
+for (i in 1:length(age.path)){
+  
+  # init a 3X5 matrix for each date's ORs
+  OR <- matrix(NA, ncol=3, nrow=5)
+  colnames(OR) <- c("case","hos","death")
+  df <- age.list[[i]] #data for each date in a df
+  
+    for (j in 2:4){
+    total <- (df[6,j]/(100000-df[6,j]))
+  
+    age17 <- (df[1,j]/(100000-df[1,j]))
+    age44 <- (df[2,j]/(100000-df[2,j]))
+    age64 <- (df[3,j]/(100000-df[3,j]))
+    age74 <- (df[4,j]/(100000-df[4,j]))
+    age75Older <- (df[5,j]/(100000-df[5,j]))
+    
+    OR[,j-1] <- c(age17,age44,age64,age74,age75Older)/total
+    OR <- round(OR,6) # ORs for ith date
+    }
+  age.ORlist[[i]] <- OR
+}
+
+age.ORlist[[1]] <- Mar.26.OR
+
+names(age.ORlist) <- date.dfname
+```
+
+
+```{r}
+# ORs by age all dates
+sex.ORlist <- vector(mode = "list", length = length(sex.path))
+
+
+for (i in 1:length(sex.path)){
+  df <- sex.list[[i]] #data for each date in a df
+  
+  # init a vector to store case hospitalization and death ORs 
+  OR <- rep(NA, 3)
+  names(OR) <- c("case","hos","death")
+  
+  for (j in 2:4){
+    female.odds <- df[1,j]/(100000-df[1,j])
+    male.odds <- df[2,j]/(100000-df[2,j])
+    OR[j-1] <- female.odds/male.odds
+  }
+  OR <- round(OR,6) # ORs for ith date
+  sex.ORlist[[i]] <- OR
+}
+
+names(sex.ORlist) <- date.dfname
+```
+

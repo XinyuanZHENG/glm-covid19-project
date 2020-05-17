@@ -1,0 +1,43 @@
+---
+title: "model"
+author: "Xinyuan Zheng xz2906"
+date: "5/17/2020"
+output: pdf_document
+---
+
+```{r}
+data <- read.csv("nyc.gov/5.15/case-hosp-death.csv")
+
+for (i in 1:dim(data)[1]){
+  data$accum_case[i] <- sum(data[1:i,2])
+}
+```
+
+```{r}
+case.ts <- data[,2]
+accumcase.ts <- data[,5]
+death.ts <- data[,4]
+```
+
+
+```{r}
+## Create a daily Date object - helps my work on dates
+date.inds <- seq(as.Date("2020-02-29"), as.Date("2020-5-14"), by = "day")
+start.date <- as.numeric(format(date.inds[1], "%j"))
+
+case.ts <- ts(case.ts, start=c(2020,start.date), frequency=365)
+plot.ts(case.ts)
+```
+
+```{r}
+
+glmulti.pois.out <-
+  glmulti(CASES_now~CASES_lag4+TEST+MOB+MOB_IND+PROV, data = dat.combine,
+          level = 2,               # pairwise interaction considered
+          method = "h",            # Exhaustive approach
+          crit = "bic",            # BIC as criteria
+          confsetsize = 10,        # Keep 10 best models
+          plotty = F, report = F,  # Plot or interim reports
+          fitfunction = glm.pois)
+```
+
