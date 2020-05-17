@@ -63,7 +63,6 @@ names(age.ORlist) <- date.dfname
 # ORs by age all dates
 sex.ORlist <- vector(mode = "list", length = length(sex.path))
 
-
 for (i in 1:length(sex.path)){
   df <- sex.list[[i]] #data for each date in a df
   
