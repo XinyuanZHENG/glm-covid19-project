@@ -15,11 +15,13 @@ case <- data[,2]
 accumcase <- data[,5]
 death <- data[,4]
 accumdeath <- data[,6]
+hos <- data[,3]
 
 glm.data <- data.frame(case=case,
-                         accumcase=accumcase,
-                         death=death,
-                         accumdeath=accumdeath)
+                       accumcase=accumcase,
+                       death=death,
+                       accumdeath=accumdeath,
+                       hos=hos)
 date.inds <- seq(as.Date("2020-02-29"), as.Date("2020-5-14"), by = "day")
 rownames(glm.data) <- date.inds
 ```
@@ -31,6 +33,7 @@ rownames(glm.data) <- date.inds
 before.order.period <- ceiling(which(date.inds=="2020-03-22") + 5.1) # 5.1 days estimated to be the incubation period
 glm.data$order <- rep(1,dim(glm.data)[1])
 glm.data$order[1:before.order.period] <- 0
+glm.data$order <- as.factor(glm.data$order)
 ```
 
 
@@ -46,6 +49,7 @@ expand.test.date <- which(date.inds=="2020-04-25") # New York To Expand Testing 
 
 glm.data$test <- rep(1,dim(glm.data)[1])
 glm.data$test[1:expand.test.date] <- 0
+glm.data$test <- as.factor(glm.data$test)
 ```
 
 
@@ -68,14 +72,33 @@ train$lag1 <- rep(0,dim(train)[1])
 for (i in 1:(dim(train)[1]-1)){
   train$lag1[i+1] <- train[i,"case"]
 }
-```
-
-
-```{r}
 # lag2 for daily case
 train$lag2 <- rep(0,dim(train)[1])
 for (i in 1:(dim(train)[1]-2)){
   train$lag2[i+2] <- train[i,"case"]
+}
+# lag3 for daily case
+train$lag3 <- rep(0,dim(train)[1])
+for (i in 1:(dim(train)[1]-3)){
+  train$lag3[i+3] <- train[i,"case"]
+}
+```
+
+```{r}
+# lag1 for hospitalisation case
+train$hoslag1 <- rep(0,dim(train)[1])
+for (i in 1:(dim(train)[1]-1)){
+  train$hoslag1[i+1] <- train[i,"hos"]
+}
+# lag2 for hospitalisation case
+train$hoslag2 <- rep(0,dim(train)[1])
+for (i in 1:(dim(train)[1]-2)){
+  train$hoslag2[i+2] <- train[i,"hos"]
+}
+# lag3 for hospitalisation case
+train$hoslag3 <- rep(0,dim(train)[1])
+for (i in 1:(dim(train)[1]-3)){
+  train$hoslag3[i+3] <- train[i,"hos"]
 }
 ```
 
