@@ -6,6 +6,10 @@ output: pdf_document
 ---
 
 ```{r}
+# dataset and some EDA
+```
+
+```{r}
 # dataframe contains the summary data 
 case <- data[,2]
 accumcase <- data[,5]
@@ -36,7 +40,6 @@ abline(v=before.order.period, col = "red")
 ```
 
 
-
 ```{r}
 # create an indicator for Testing Criteria
 expand.test.date <- which(date.inds=="2020-04-25") # New York To Expand Testing Criteria For Coronavirus on Apr 25
@@ -50,3 +53,29 @@ glm.data$test[1:expand.test.date] <- 0
 plot(glm.data$case, type = "l")
 abline(v=expand.test.date, col = "blue")
 ```
+
+
+```{r}
+# train and test set 1:9
+train <- glm.data[1:round(dim(glm.data)[1]*0.9),]
+test <- glm.data[-(1:round(dim(glm.data)[1]*0.9)),]
+```
+
+
+```{r}
+# lag1 for daily case
+train$lag1 <- rep(0,dim(train)[1])
+for (i in 1:(dim(train)[1]-1)){
+  train$lag1[i+1] <- train[i,"case"]
+}
+```
+
+
+```{r}
+# lag2 for daily case
+train$lag2 <- rep(0,dim(train)[1])
+for (i in 1:(dim(train)[1]-2)){
+  train$lag2[i+2] <- train[i,"case"]
+}
+```
+
