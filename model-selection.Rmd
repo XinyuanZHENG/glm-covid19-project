@@ -122,6 +122,7 @@ require(methods)
 cvglm <- cv.glmnet(x, y, alpha = 0, lambda = 10^seq(-3,3,by =.1))
 summary(cvglm)
 plot(cvglm)
+coef(cvglm)
 
 l <- cvglm$lambda.min
 cv.err <- cvglm$cvm[which.min(cvglm$cvm)] #704375.3
