@@ -1,5 +1,5 @@
 ---
-title: "model"
+title: "models"
 author: "Xinyuan Zheng xz2906"
 date: "5/17/2020"
 output: pdf_document
@@ -97,4 +97,64 @@ pred.case5 <- predict(glm5,type="response")
 plot(glm.data$case, type = "l", ylim = c(0,8000))
 lines(c(1:dim(train)[1]), pred.case5, col = "blue", lwd=2)
 ```
+
+
+####################
+
+```{r}
+library(glmnet)
+# to include interactions
+f <- as.formula(case~order+test+lag2+hoslag2+
+              lag2:hoslag2+
+              test:lag2+
+              order:hoslag2)
+# transform dataframe to matrices as required by glmnet
+x <- model.matrix(f, train)
+t <- model.matrix(f, test)
+y <- as.matrix(train$case, ncol=1)
+```
+
+
+
+```{r}
+# rigid
+require(methods)
+cvglm <- cv.glmnet(x, y, alpha = 0, lambda = 10^seq(-3,3,by =.1))
+summary(cvglm)
+plot(cvglm)
+
+l <- cvglm$lambda.min
+cv.err <- cvglm$cvm[which.min(cvglm$cvm)] #704375.3
+
+pred.cvglm <- predict(cvglm, newx=t)
+
+plot(glm.data$case, type = "l", ylim = c(0,8000))
+lines((dim(train)[1]+1):(dim(train)[1]+dim(test)[1]), pred.cvglm, col = "blue", lwd=2)
+```
+
+
+```{r}
+# lasso
+cvglm2 <- cv.glmnet(x, y, alpha = 1, lambda = 10^seq(-3,3,by =.1))
+summary(cvglm2)
+plot(cvglm2)
+
+l2 <- cvglm2$lambda.min
+pred.cvglm2 <- predict(cvglm2, newx=t)
+cv.err2 <- cvglm2$cvm[which.min(cvglm2$cvm)] #674864.3
+
+plot(glm.data$case, type = "l", ylim = c(0,8000))
+lines((dim(train)[1]+1):(dim(train)[1]+dim(test)[1]), pred.cvglm2, col = "blue", lwd=2)
+```
+
+
+
+
+
+
+
+
+
+
+
 
