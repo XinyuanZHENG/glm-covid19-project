@@ -1,0 +1,100 @@
+---
+title: "model"
+author: "Xinyuan Zheng xz2906"
+date: "5/17/2020"
+output: pdf_document
+---
+
+
+```{r}
+library(glmnet)
+```
+
+
+```{r}
+# using all predictors
+glm0 <- glm(case~order+test+
+              lag1+lag2+lag3+
+              hoslag1+hoslag1+hoslag3, 
+            data = train, family = "poisson")
+summary(glm0) # AIC: 33256
+plot(glm0)
+pred.case0 <- predict(glm0,type="response")
+
+plot(glm.data$case, type = "l", ylim = c(0,8000))
+lines(c(1:dim(train)[1]), pred.case0, col = "blue",lwd=2)
+```
+
+
+```{r}
+# lag3
+glm1 <- glm(case~order+test+lag3+hoslag3, data = train, family = "poisson")
+summary(glm1) # AIC: 49367
+plot(glm1)
+pred.case1 <- predict(glm1,type="response")
+
+plot(glm.data$case, type = "l", ylim = c(0,8000))
+lines(c(1:dim(train)[1]), pred.case1, col = "blue", lwd=2)
+```
+
+
+```{r}
+# lag2
+glm2 <- glm(case~order+test+lag2+hoslag2, data = train, family = "poisson")
+summary(glm2) # AIC: 46773
+plot(glm2)
+pred.case2 <- predict(glm2,type="response")
+
+plot(glm.data$case, type = "l", ylim = c(0,8000))
+lines(c(1:dim(train)[1]), pred.case2, col = "blue", lwd=2)
+```
+
+
+```{r}
+glm3 <- glm(case~order+test+lag2+hoslag2+
+              lag2*hoslag2+
+              lag2*test+
+              hoslag2*test+
+              order*lag2+
+              order*hoslag2, 
+            data = train, family = "poisson")
+summary(glm3) # AIC: 25555
+plot(glm3)
+pred.case3 <- predict(glm3,type="response")
+
+plot(glm.data$case, type = "l", ylim = c(0,8000))
+lines(c(1:dim(train)[1]), pred.case3, col = "blue", lwd=2)
+```
+
+
+```{r}
+# keep significant interaction terms
+glm4 <- glm(case~order+test+lag2+hoslag2+
+              lag2*hoslag2+
+              test*lag2+
+              test*hoslag2+
+              order*hoslag2,
+            data = train, family = "poisson")
+summary(glm4) # AIC: 25553
+plot(glm4)
+pred.case4 <- predict(glm4,type="response")
+
+plot(glm.data$case, type = "l", ylim = c(0,8000))
+lines(c(1:dim(train)[1]), pred.case4, col = "blue", lwd=2)
+```
+
+
+```{r}
+glm5 <- glm(case~order+test+lag2+hoslag2+
+              lag2*hoslag2+
+              test*lag2+
+              order*hoslag2,
+            data = train, family = "poisson")
+summary(glm5) # AIC: 25554
+plot(glm5)
+pred.case5 <- predict(glm5,type="response")
+
+plot(glm.data$case, type = "l", ylim = c(0,8000))
+lines(c(1:dim(train)[1]), pred.case5, col = "blue", lwd=2)
+```
+
