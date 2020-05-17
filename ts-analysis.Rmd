@@ -9,6 +9,7 @@ output: pdf_document
 library(forecast)
 ```
 
+
 ```{r}
 data <- read.csv("nyc.gov/5.15/case-hosp-death.csv")
 
@@ -17,10 +18,10 @@ for (i in 1:dim(data)[1]){
   data$accum_death[i] <- sum(data[1:i,4])
 }
 
-case.ts <- data[,2]
-accumcase.ts <- data[,5]
-death.ts <- data[,4]
-accum_death.ts <- data[,6]
+case <- data[,2]
+accumcase <- data[,5]
+death <- data[,4]
+accumdeath <- data[,6]
 ```
 
 
@@ -29,10 +30,10 @@ accum_death.ts <- data[,6]
 date.inds <- seq(as.Date("2020-02-29"), as.Date("2020-5-14"), by = "day")
 start.date <- as.numeric(format(date.inds[1], "%j"))
 # create the time series
-case.ts <- ts(case.ts, start=c(2020,start.date), frequency=365)
-accumcase.ts <- ts(accumcase.ts, start=c(2020,start.date), frequency=365)
-death.ts <- ts(death.ts, start=c(2020,start.date), frequency=365)
-accum_death.ts <- ts(accum_death.ts, start=c(2020,start.date), frequency=365)
+case.ts <- ts(case, start=c(2020,start.date), frequency=365)
+accumcase.ts <- ts(accumcase, start=c(2020,start.date), frequency=365)
+death.ts <- ts(death, start=c(2020,start.date), frequency=365)
+accumdeath.ts <- ts(accumdeath, start=c(2020,start.date), frequency=365)
 ```
 
 
@@ -42,7 +43,7 @@ par(mfrow=c(2,2), mar=c(3,3,2,3))
 plot.ts(case.ts, main="daily cases")
 plot.ts(accumcase.ts, main="total cases")
 plot.ts(death.ts, main="daily deaths")
-plot.ts(accum_death.ts, main="total deaths")
+plot.ts(accumdeath.ts, main="total deaths")
 ```
 
 
@@ -71,21 +72,5 @@ exp.model.death
 arma.model.death
 #accuracy(arma.model.death)
 arimaorder(arma.model.death) # 0 2 5 
-```
-
-
-
-
-
-
-```{r}
-glmulti.pois.out <-
-  glmulti(CASES_now~CASES_lag4+TEST+MOB+MOB_IND+PROV, data = dat.combine,
-          level = 2,               # pairwise interaction considered
-          method = "h",            # Exhaustive approach
-          crit = "bic",            # BIC as criteria
-          confsetsize = 10,        # Keep 10 best models
-          plotty = F, report = F,  # Plot or interim reports
-          fitfunction = glm.pois)
 ```
 

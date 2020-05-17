@@ -1,0 +1,52 @@
+---
+title: "build-data-glm"
+author: "Xinyuan Zheng xz2906"
+date: "5/17/2020"
+output: pdf_document
+---
+
+```{r}
+# dataframe contains the summary data 
+case <- data[,2]
+accumcase <- data[,5]
+death <- data[,4]
+accumdeath <- data[,6]
+
+glm.data <- data.frame(case=case,
+                         accumcase=accumcase,
+                         death=death,
+                         accumdeath=accumdeath)
+date.inds <- seq(as.Date("2020-02-29"), as.Date("2020-5-14"), by = "day")
+rownames(glm.data) <- date.inds
+```
+
+
+```{r}
+# create an indicator for stay-at-home order
+# Effective at 8PM on Sunday, March 22 New York State on PAUSE Executive Order 
+before.order.period <- ceiling(which(date.inds=="2020-03-22") + 5.1) # 5.1 days estimated to be the incubation period
+glm.data$order <- rep(1,dim(glm.data)[1])
+glm.data$order[1:before.order.period] <- 0
+```
+
+
+```{r}
+plot(glm.data$case, type = "l")
+abline(v=before.order.period, col = "red")
+```
+
+
+
+```{r}
+# create an indicator for Testing Criteria
+expand.test.date <- which(date.inds=="2020-04-25") # New York To Expand Testing Criteria For Coronavirus on Apr 25
+
+glm.data$test <- rep(1,dim(glm.data)[1])
+glm.data$test[1:expand.test.date] <- 0
+```
+
+
+```{r}
+plot(glm.data$case, type = "l")
+abline(v=expand.test.date, col = "blue")
+```
