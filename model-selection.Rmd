@@ -119,7 +119,7 @@ y <- as.matrix(train$case, ncol=1)
 ```{r}
 # rigid
 require(methods)
-cvglm <- cv.glmnet(x, y, alpha = 0, lambda = 10^seq(-3,3,by =.1))
+cvglm <- cv.glmnet(x, y, alpha = 0, lambda = 10^seq(-3,3,by =.1), nfolds = 10) 
 summary(cvglm)
 plot(cvglm)
 coef(cvglm)
@@ -210,6 +210,4 @@ RSS2 <- sum((pred.cvglm2-glm.data$case[ind])^2) #1275282
 # #RSS
 # RSS2 <- sum((pred.cvglm2-glm.data$case[ind])^2) #1525892
 ```
-
-
 
