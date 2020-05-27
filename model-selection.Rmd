@@ -5,6 +5,10 @@ date: "5/17/2020"
 output: pdf_document
 ---
 
+```{r}
+# Please first run build-data-glm to create variables in your environment
+```
+
 
 ```{r}
 library(glmnet)
